@@ -1,0 +1,230 @@
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { GitBranch, Layers, Clock, Zap, Brain, HardDrive } from "lucide-react";
+
+export default function AlgorithmComparison({ metrics, isRunning }) {
+  return (
+    <div className="space-y-6">
+      {/* Algorithm Overview Cards */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="glass-effect premium-shadow">
+          <CardHeader className="border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-emerald-100">
+            <CardTitle className="flex items-center gap-2 text-emerald-800">
+              <GitBranch className="w-6 h-6" />
+              Recursive Approach
+              <Badge className="bg-emerald-200 text-emerald-800">Traditional</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Steps Executed</span>
+                <span className="font-bold text-lg">{metrics.recursive.steps}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Max Call Stack</span>
+                <span className="font-bold text-lg">{metrics.recursive.maxDepth}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Execution Time</span>
+                <span className="font-bold text-lg">{metrics.recursive.executionTime.toFixed(2)}ms</span>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100">
+              <h4 className="font-semibold mb-3 text-emerald-800">Characteristics</h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Brain className="w-4 h-4 text-emerald-600" />
+                  <span>Intuitive and readable</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <HardDrive className="w-4 h-4 text-emerald-600" />
+                  <span>Uses function call stack</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Zap className="w-4 h-4 text-emerald-600" />
+                  <span>Automatic backtracking</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect premium-shadow">
+          <CardHeader className="border-b border-blue-100 bg-gradient-to-r from-blue-50 to-blue-100">
+            <CardTitle className="flex items-center gap-2 text-blue-800">
+              <Layers className="w-6 h-6" />
+              Iterative Approach
+              <Badge className="bg-blue-200 text-blue-800">Stack-Based</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Steps Executed</span>
+                <span className="font-bold text-lg">{metrics.iterative.steps}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Max Stack Size</span>
+                <span className="font-bold text-lg">{metrics.iterative.stackSize}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Execution Time</span>
+                <span className="font-bold text-lg">{metrics.iterative.executionTime.toFixed(2)}ms</span>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100">
+              <h4 className="font-semibold mb-3 text-blue-800">Characteristics</h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <HardDrive className="w-4 h-4 text-blue-600" />
+                  <span>Explicit stack management</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Zap className="w-4 h-4 text-blue-600" />
+                  <span>No function call overhead</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Brain className="w-4 h-4 text-blue-600" />
+                  <span>Memory efficient</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detailed Comparison Table */}
+      <Card className="glass-effect premium-shadow">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <Clock className="w-6 h-6 text-amber-600" />
+            Detailed Comparison
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 font-semibold">Aspect</th>
+                  <th className="text-center py-3 font-semibold text-emerald-700">Recursive</th>
+                  <th className="text-center py-3 font-semibold text-blue-700">Iterative</th>
+                  <th className="text-left py-3 font-semibold">Winner</th>
+                </tr>
+              </thead>
+              <tbody className="space-y-2">
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 font-medium">Code Readability</td>
+                  <td className="text-center py-3">
+                    <Badge className="bg-emerald-100 text-emerald-800">Excellent</Badge>
+                  </td>
+                  <td className="text-center py-3">
+                    <Badge variant="outline">Good</Badge>
+                  </td>
+                  <td className="py-3">
+                    <Badge className="bg-emerald-100 text-emerald-800">Recursive</Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 font-medium">Memory Usage</td>
+                  <td className="text-center py-3">
+                    <Badge variant="outline">Higher</Badge>
+                  </td>
+                  <td className="text-center py-3">
+                    <Badge className="bg-blue-100 text-blue-800">Lower</Badge>
+                  </td>
+                  <td className="py-3">
+                    <Badge className="bg-blue-100 text-blue-800">Iterative</Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 font-medium">Stack Overflow Risk</td>
+                  <td className="text-center py-3">
+                    <Badge className="bg-red-100 text-red-800">High</Badge>
+                  </td>
+                  <td className="text-center py-3">
+                    <Badge className="bg-green-100 text-green-800">Low</Badge>
+                  </td>
+                  <td className="py-3">
+                    <Badge className="bg-blue-100 text-blue-800">Iterative</Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 font-medium">Implementation Complexity</td>
+                  <td className="text-center py-3">
+                    <Badge className="bg-emerald-100 text-emerald-800">Simple</Badge>
+                  </td>
+                  <td className="text-center py-3">
+                    <Badge className="bg-orange-100 text-orange-800">Moderate</Badge>
+                  </td>
+                  <td className="py-3">
+                    <Badge className="bg-emerald-100 text-emerald-800">Recursive</Badge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* When to Use Each */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="glass-effect premium-shadow border-emerald-200">
+          <CardHeader className="bg-emerald-50">
+            <CardTitle className="text-emerald-800">Use Recursive When:</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <ul className="space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Tree depth is guaranteed to be small</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Code readability is prioritized</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Problem naturally fits recursive structure</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Development speed is important</span>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect premium-shadow border-blue-200">
+          <CardHeader className="bg-blue-50">
+            <CardTitle className="text-blue-800">Use Iterative When:</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <ul className="space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Tree can be very deep</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Memory usage is critical</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Performance is paramount</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                <span>Stack overflow must be avoided</span>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
