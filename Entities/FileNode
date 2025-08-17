@@ -1,0 +1,43 @@
+{
+  "name": "FileNode",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the file or folder"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "file",
+        "folder"
+      ],
+      "description": "Whether this is a file or folder"
+    },
+    "path": {
+      "type": "string",
+      "description": "Full path to the file/folder"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "ID of the parent folder"
+    },
+    "size": {
+      "type": "number",
+      "description": "Size in bytes (for files)"
+    },
+    "extension": {
+      "type": "string",
+      "description": "File extension (for files)"
+    },
+    "depth": {
+      "type": "number",
+      "description": "Depth level in the tree"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "path"
+  ]
+}
