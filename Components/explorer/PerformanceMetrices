@@ -1,0 +1,214 @@
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+import { TrendingUp, Clock, Activity, Zap } from "lucide-react";
+
+export default function PerformanceMetrics({ metrics, executionSteps }) {
+  const comparisonData = [
+    {
+      name: 'Steps',
+      Recursive: metrics.recursive.steps,
+      Iterative: metrics.iterative.steps,
+    },
+    {
+      name: 'Memory',
+      Recursive: metrics.recursive.maxDepth,
+      Iterative: metrics.iterative.stackSize,
+    },
+    {
+      name: 'Time (ms)',
+      Recursive: metrics.recursive.executionTime,
+      Iterative: metrics.iterative.executionTime,
+    },
+  ];
+
+  const executionTimeline = executionSteps.map((step, index) => ({
+    step: index + 1,
+    depth: step.depth,
+    type: step.type,
+  }));
+
+  return (
+    <div className="space-y-6">
+      {/* Key Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="glass-effect premium-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <Activity className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Steps</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {Math.max(metrics.recursive.steps, metrics.iterative.steps)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect premium-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Max Depth</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {Math.max(metrics.recursive.maxDepth, metrics.iterative.stackSize)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect premium-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                <Clock className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Avg Time</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {((metrics.recursive.executionTime + metrics.iterative.executionTime) / 2).toFixed(1)}ms
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect premium-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Zap className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Efficiency</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {metrics.recursive.executionTime && metrics.iterative.executionTime 
+                    ? (metrics.recursive.executionTime < metrics.iterative.executionTime ? 'REC' : 'ITER')
+                    : 'N/A'
+                  }
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance Comparison Chart */}
+      <Card className="glass-effect premium-shadow">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart className="w-6 h-6 text-emerald-600" />
+            Performance Comparison
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={comparisonData}>
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <Bar dataKey="Recursive" fill="#10B981" radius={4} />
+              <Bar dataKey="Iterative" fill="#3B82F6" radius={4} />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Execution Depth Timeline */}
+      {executionTimeline.length > 0 && (
+        <Card className="glass-effect premium-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-6 h-6 text-amber-600" />
+              Execution Depth Timeline
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={executionTimeline}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis dataKey="step" />
+                <YAxis />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="depth" 
+                  stroke="#F59E0B" 
+                  strokeWidth={3}
+                  dot={{ fill: '#F59E0B', strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Complexity Analysis */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="glass-effect premium-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg">Time Complexity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
+                <span className="font-medium text-emerald-800">Recursive</span>
+                <code className="bg-white px-2 py-1 rounded text-emerald-700">O(n)</code>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                <span className="font-medium text-blue-800">Iterative</span>
+                <code className="bg-white px-2 py-1 rounded text-blue-700">O(n)</code>
+              </div>
+              <p className="text-sm text-gray-600 mt-3">
+                Both approaches visit each node exactly once, resulting in linear time complexity.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect premium-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg">Space Complexity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                <span className="font-medium text-orange-800">Recursive</span>
+                <code className="bg-white px-2 py-1 rounded text-orange-700">O(h)</code>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                <span className="font-medium text-green-800">Iterative</span>
+                <code className="bg-white px-2 py-1 rounded text-green-700">O(h)</code>
+              </div>
+              <p className="text-sm text-gray-600 mt-3">
+                Space complexity depends on tree height (h). Recursive uses call stack, iterative uses explicit stack.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
