@@ -1,0 +1,325 @@
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Play, 
+  Pause, 
+  RotateCcw, 
+  FolderTree, 
+  Activity, 
+  Clock, 
+  Layers,
+  ChevronRight,
+  ChevronDown,
+  File,
+  Folder
+} from "lucide-react";
+
+import FileSystemTree from "../components/explorer/FileSystemTree";
+import AlgorithmComparison from "../components/explorer/AlgorithmComparison";
+import ExecutionVisualizer from "../components/explorer/ExecutionVisualizer";
+import PerformanceMetrics from "../components/explorer/PerformanceMetrics";
+
+// Mock file system data
+const mockFileSystem = {
+  id: "root",
+  name: "root",
+  type: "folder",
+  path: "/",
+  children: [
+    {
+      id: "projects",
+      name: "projects",
+      type: "folder",
+      path: "/projects",
+      children: [
+        {
+          id: "web-app",
+          name: "web-app",
+          type: "folder",
+          path: "/projects/web-app",
+          children: [
+            { id: "index.js", name: "index.js", type: "file", path: "/projects/web-app/index.js", size: 1024 },
+            { id: "style.css", name: "style.css", type: "file", path: "/projects/web-app/style.css", size: 2048 },
+            {
+              id: "components",
+              name: "components",
+              type: "folder",
+              path: "/projects/web-app/components",
+              children: [
+                { id: "header.js", name: "Header.js", type: "file", path: "/projects/web-app/components/Header.js", size: 512 },
+                { id: "footer.js", name: "Footer.js", type: "file", path: "/projects/web-app/components/Footer.js", size: 768 }
+              ]
+            }
+          ]
+        },
+        {
+          id: "mobile-app",
+          name: "mobile-app",
+          type: "folder",
+          path: "/projects/mobile-app",
+          children: [
+            { id: "main.dart", name: "main.dart", type: "file", path: "/projects/mobile-app/main.dart", size: 3072 },
+            { id: "pubspec.yaml", name: "pubspec.yaml", type: "file", path: "/projects/mobile-app/pubspec.yaml", size: 512 }
+          ]
+        }
+      ]
+    },
+    {
+      id: "documents",
+      name: "documents",
+      type: "folder",
+      path: "/documents",
+      children: [
+        { id: "readme.md", name: "README.md", type: "file", path: "/documents/README.md", size: 1536 },
+        { id: "notes.txt", name: "notes.txt", type: "file", path: "/documents/notes.txt", size: 256 },
+        {
+          id: "archives",
+          name: "archives",
+          type: "folder",
+          path: "/documents/archives",
+          children: [
+            { id: "old-project.zip", name: "old-project.zip", type: "file", path: "/documents/archives/old-project.zip", size: 10240 }
+          ]
+        }
+      ]
+    },
+    {
+      id: "media",
+      name: "media",
+      type: "folder",
+      path: "/media",
+      children: [
+        { id: "photo1.jpg", name: "photo1.jpg", type: "file", path: "/media/photo1.jpg", size: 5120 },
+        { id: "video1.mp4", name: "video1.mp4", type: "file", path: "/media/video1.mp4", size: 25600 }
+      ]
+    }
+  ]
+};
+
+export default function ExplorerPage() {
+  const [activeAlgorithm, setActiveAlgorithm] = useState(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [executionSteps, setExecutionSteps] = useState([]);
+  const [metrics, setMetrics] = useState({
+    recursive: { steps: 0, maxDepth: 0, executionTime: 0 },
+    iterative: { steps: 0, stackSize: 0, executionTime: 0 }
+  });
+  const [visitedNodes, setVisitedNodes] = useState(new Set());
+
+  const runTraversal = async (algorithm) => {
+    setActiveAlgorithm(algorithm);
+    setIsRunning(true);
+    setCurrentStep(0);
+    setVisitedNodes(new Set());
+    
+    const steps = [];
+    const startTime = performance.now();
+
+    if (algorithm === 'recursive') {
+      await runRecursiveTraversal(mockFileSystem, steps, 0);
+      const endTime = performance.now();
+      setMetrics(prev => ({
+        ...prev,
+        recursive: {
+          steps: steps.length,
+          maxDepth: Math.max(...steps.map(s => s.depth || 0)),
+          executionTime: endTime - startTime
+        }
+      }));
+    } else {
+      await runIterativeTraversal(mockFileSystem, steps);
+      const endTime = performance.now();
+      setMetrics(prev => ({
+        ...prev,
+        iterative: {
+          steps: steps.length,
+          stackSize: Math.max(...steps.map(s => s.stackSize || 0)),
+          executionTime: endTime - startTime
+        }
+      }));
+    }
+
+    setExecutionSteps(steps);
+    animateExecution(steps);
+  };
+
+  const runRecursiveTraversal = async (node, steps, depth = 0) => {
+    steps.push({
+      type: 'visit',
+      node: node,
+      depth: depth,
+      action: `Visiting ${node.type}: ${node.name}`,
+      callStack: depth + 1
+    });
+
+    if (node.children) {
+      for (const child of node.children) {
+        steps.push({
+          type: 'recurse',
+          node: child,
+          depth: depth + 1,
+          action: `Recursing into: ${child.name}`,
+          callStack: depth + 2
+        });
+        await runRecursiveTraversal(child, steps, depth + 1);
+      }
+    }
+
+    steps.push({
+      type: 'return',
+      node: node,
+      depth: depth,
+      action: `Returning from: ${node.name}`,
+      callStack: depth
+    });
+  };
+
+  const runIterativeTraversal = async (root, steps) => {
+    const stack = [{ node: root, depth: 0 }];
+    
+    while (stack.length > 0) {
+      const { node, depth } = stack.pop();
+      
+      steps.push({
+        type: 'visit',
+        node: node,
+        depth: depth,
+        action: `Popped from stack: ${node.name}`,
+        stackSize: stack.length + 1
+      });
+
+      if (node.children) {
+        // Push children in reverse order to maintain left-to-right traversal
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          const child = node.children[i];
+          stack.push({ node: child, depth: depth + 1 });
+          steps.push({
+            type: 'push',
+            node: child,
+            depth: depth + 1,
+            action: `Pushed to stack: ${child.name}`,
+            stackSize: stack.length
+          });
+        }
+      }
+    }
+  };
+
+  const animateExecution = async (steps) => {
+    for (let i = 0; i < steps.length; i++) {
+      if (isPaused) break;
+      
+      setCurrentStep(i);
+      setVisitedNodes(prev => new Set([...prev, steps[i].node.id]));
+      
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
+    setIsRunning(false);
+  };
+
+  const resetExecution = () => {
+    setIsRunning(false);
+    setIsPaused(false);
+    setCurrentStep(0);
+    setExecutionSteps([]);
+    setVisitedNodes(new Set());
+    setActiveAlgorithm(null);
+  };
+
+  return (
+    <div className="min-h-screen p-6 gradient-bg">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">File System Explorer</h1>
+              <p className="text-gray-600 text-lg">Compare recursive vs iterative tree traversal algorithms</p>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                onClick={() => runTraversal('recursive')}
+                disabled={isRunning}
+                className="bg-emerald-600 hover:bg-emerald-700 px-6 py-3"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Run Recursive
+              </Button>
+              
+              <Button
+                onClick={() => runTraversal('iterative')}
+                disabled={isRunning}
+                variant="outline"
+                className="px-6 py-3 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                Run Iterative
+              </Button>
+              
+              <Button
+                onClick={resetExecution}
+                variant="outline"
+                className="px-6 py-3"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        <Tabs defaultValue="visualization" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm">
+            <TabsTrigger value="visualization">Visualization</TabsTrigger>
+            <TabsTrigger value="comparison">Algorithm Comparison</TabsTrigger>
+            <TabsTrigger value="metrics">Performance</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="visualization" className="space-y-6">
+            <div className="grid lg:grid-cols-2 gap-6">
+              <FileSystemTree 
+                fileSystem={mockFileSystem}
+                visitedNodes={visitedNodes}
+                currentNode={executionSteps[currentStep]?.node}
+                isRunning={isRunning}
+              />
+              
+              <ExecutionVisualizer 
+                steps={executionSteps}
+                currentStep={currentStep}
+                algorithm={activeAlgorithm}
+                isRunning={isRunning}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="comparison">
+            <AlgorithmComparison 
+              metrics={metrics}
+              isRunning={isRunning}
+            />
+          </TabsContent>
+
+          <TabsContent value="metrics">
+            <PerformanceMetrics 
+              metrics={metrics}
+              executionSteps={executionSteps}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
