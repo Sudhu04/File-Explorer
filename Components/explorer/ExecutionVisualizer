@@ -1,0 +1,137 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Activity, Layers, ArrowRight, ArrowDown } from "lucide-react";
+
+export default function ExecutionVisualizer({ steps, currentStep, algorithm, isRunning }) {
+  const currentStepData = steps[currentStep];
+  const progress = steps.length > 0 ? ((currentStep + 1) / steps.length) * 100 : 0;
+
+  return (
+    <Card className="glass-effect premium-shadow">
+      <CardHeader className="border-b border-gray-100">
+        <CardTitle className="flex items-center gap-2 text-xl">
+          <Activity className="w-6 h-6 text-amber-600" />
+          Execution Visualizer
+          {algorithm && (
+            <Badge className={algorithm === 'recursive' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}>
+              {algorithm}
+            </Badge>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-6">
+        {!algorithm ? (
+          <div className="text-center py-12 text-gray-500">
+            <Activity className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <p className="text-lg font-medium">Select an algorithm to begin</p>
+            <p className="text-sm">Choose recursive or iterative traversal to see the execution</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Execution Progress</span>
+                <span className="text-gray-600">{currentStep + 1} / {steps.length}</span>
+              </div>
+              <Progress value={progress} className="h-2" />
+            </div>
+
+            {/* Current Step Info */}
+            {currentStepData && (
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className={`${
+                      currentStepData.type === 'visit' ? 'bg-emerald-100 text-emerald-800' :
+                      currentStepData.type === 'recurse' ? 'bg-blue-100 text-blue-800' :
+                      currentStepData.type === 'push' ? 'bg-purple-100 text-purple-800' :
+                      'bg-orange-100 text-orange-800'
+                    }`}>
+                      {currentStepData.type}
+                    </Badge>
+                    <ArrowRight className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <p className="font-medium text-gray-900">{currentStepData.action}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Path: {currentStepData.node.path} | Depth: {currentStepData.depth}
+                  </p>
+                </div>
+
+                {/* Algorithm-specific metrics */}
+                <div className="grid grid-cols-2 gap-4">
+                  {algorithm === 'recursive' && currentStepData.callStack && (
+                    <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Layers className="w-4 h-4 text-emerald-600" />
+                        <span className="text-sm font-medium text-emerald-800">Call Stack</span>
+                      </div>
+                      <p className="text-lg font-bold text-emerald-700">{currentStepData.callStack}</p>
+                    </div>
+                  )}
+                  
+                  {algorithm === 'iterative' && currentStepData.stackSize !== undefined && (
+                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Layers className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">Stack Size</span>
+                      </div>
+                      <p className="text-lg font-bold text-blue-700">{currentStepData.stackSize}</p>
+                    </div>
+                  )}
+
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <ArrowDown className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-800">Depth Level</span>
+                    </div>
+                    <p className="text-lg font-bold text-gray-700">{currentStepData.depth}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Execution Steps Timeline */}
+            <div className="space-y-2">
+              <h4 className="font-semibold text-gray-900">Execution Timeline</h4>
+              <div className="max-h-48 overflow-y-auto space-y-1">
+                {steps.slice(Math.max(0, currentStep - 3), currentStep + 4).map((step, index) => {
+                  const actualIndex = Math.max(0, currentStep - 3) + index;
+                  const isCurrent = actualIndex === currentStep;
+                  
+                  return (
+                    <motion.div
+                      key={actualIndex}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className={`p-2 rounded text-sm ${
+                        isCurrent 
+                          ? 'bg-amber-100 border border-amber-300 text-amber-800' 
+                          : actualIndex < currentStep 
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-gray-50 text-gray-600'
+                      }`}
+                    >
+                      <span className="font-mono text-xs mr-2">
+                        {String(actualIndex + 1).padStart(2, '0')}:
+                      </span>
+                      {step.action}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
