@@ -1,0 +1,336 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { 
+  Code, 
+  GitBranch, 
+  Layers, 
+  ArrowRight, 
+  CheckCircle, 
+  XCircle,
+  AlertTriangle,
+  Lightbulb
+} from "lucide-react";
+
+export default function AlgorithmsPage() {
+  const recursiveCode = `function traverseRecursive(node) {
+    // Visit the current node
+    console.log('Visiting:', node.name);
+    
+    // Process current node
+    processNode(node);
+    
+    // Recursively traverse children
+    if (node.children) {
+        for (const child of node.children) {
+            traverseRecursive(child); // Recursive call
+        }
+    }
+}`;
+
+  const iterativeCode = `function traverseIterative(root) {
+    const stack = [root]; // Initialize stack with root
+    
+    while (stack.length > 0) {
+        // Pop from stack
+        const node = stack.pop();
+        
+        // Visit the current node
+        console.log('Visiting:', node.name);
+        processNode(node);
+        
+        // Push children to stack (in reverse order)
+        if (node.children) {
+            for (let i = node.children.length - 1; i >= 0; i--) {
+                stack.push(node.children[i]);
+            }
+        }
+    }
+}`;
+
+  return (
+    <div className="min-h-screen p-6 gradient-bg">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Algorithm Deep Dive</h1>
+          <p className="text-gray-600 text-lg">Understanding recursive vs iterative tree traversal approaches</p>
+        </motion.div>
+
+        {/* Code Comparison */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <Card className="glass-effect premium-shadow">
+            <CardHeader className="border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-emerald-100">
+              <CardTitle className="flex items-center gap-2 text-emerald-800">
+                <GitBranch className="w-6 h-6" />
+                Recursive Approach
+                <Badge className="bg-emerald-200 text-emerald-800">Intuitive</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <pre className="text-sm p-4 overflow-x-auto bg-gray-50 text-gray-800">
+                <code>{recursiveCode}</code>
+              </pre>
+              <div className="p-4 border-t border-gray-100">
+                <h4 className="font-semibold mb-2 text-emerald-800">How it works:</h4>
+                <ul className="text-sm space-y-1 text-gray-600">
+                  <li>• Function calls itself for each child</li>
+                  <li>• Uses system call stack automatically</li>
+                  <li>• Natural backtracking when function returns</li>
+                  <li>• Clean and readable implementation</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect premium-shadow">
+            <CardHeader className="border-b border-blue-100 bg-gradient-to-r from-blue-50 to-blue-100">
+              <CardTitle className="flex items-center gap-2 text-blue-800">
+                <Layers className="w-6 h-6" />
+                Iterative Approach
+                <Badge className="bg-blue-200 text-blue-800">Efficient</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <pre className="text-sm p-4 overflow-x-auto bg-gray-50 text-gray-800">
+                <code>{iterativeCode}</code>
+              </pre>
+              <div className="p-4 border-t border-gray-100">
+                <h4 className="font-semibold mb-2 text-blue-800">How it works:</h4>
+                <ul className="text-sm space-y-1 text-gray-600">
+                  <li>• Uses explicit stack data structure</li>
+                  <li>• Manual push/pop operations</li>
+                  <li>• No function call overhead</li>
+                  <li>• Better control over memory usage</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Advantages & Disadvantages */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <Card className="glass-effect premium-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <GitBranch className="w-6 h-6 text-emerald-600" />
+                Recursive Method
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Advantages */}
+              <div>
+                <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" />
+                  Advantages
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Intuitive and mirrors problem structure</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Less code, more readable</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Automatic memory management</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Natural base case handling</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Disadvantages */}
+              <div>
+                <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
+                  <XCircle className="w-5 h-5" />
+                  Disadvantages
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Stack overflow risk for deep trees</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Function call overhead</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Less control over execution</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Memory usage grows with depth</span>
+                  </li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect premium-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="w-6 h-6 text-blue-600" />
+                Iterative Method
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Advantages */}
+              <div>
+                <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" />
+                  Advantages
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">No stack overflow risk</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Better memory control</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">No function call overhead</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Can handle very deep trees</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Disadvantages */}
+              <div>
+                <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
+                  <XCircle className="w-5 h-5" />
+                  Disadvantages
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">More complex implementation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Manual stack management</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Less intuitive logic flow</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm">Potential for bugs in stack handling</span>
+                  </li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Scenarios & Recommendations */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          <Card className="glass-effect premium-shadow border-amber-200">
+            <CardHeader className="bg-amber-50">
+              <CardTitle className="flex items-center gap-2 text-amber-800">
+                <AlertTriangle className="w-6 h-6" />
+                Critical Factors
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm"><strong>Tree Depth:</strong> Deep trees favor iterative</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm"><strong>Memory Limits:</strong> Constrained environments need iterative</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm"><strong>Performance:</strong> Critical applications may prefer iterative</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm"><strong>Maintainability:</strong> Simple problems suit recursive</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect premium-shadow border-emerald-200">
+            <CardHeader className="bg-emerald-50">
+              <CardTitle className="flex items-center gap-2 text-emerald-800">
+                <Lightbulb className="w-6 h-6" />
+                Best Practices
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Start with recursive for prototyping</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Profile performance with real data</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Consider hybrid approaches</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Document choice reasoning</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect premium-shadow border-blue-200">
+            <CardHeader className="bg-blue-50">
+              <CardTitle className="flex items-center gap-2 text-blue-800">
+                <Code className="w-6 h-6" />
+                Implementation Tips
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Add base case validation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Handle null/empty inputs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Use stack size limits</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                  <span className="text-sm">Optimize for your use case</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
