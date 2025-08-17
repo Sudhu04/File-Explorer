@@ -39,7 +39,7 @@ An interactive web application that visually demonstrates and compares recursive
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/tree-traversal-explorer.git
+git clone (https://github.com/Sudhu04/File-Explorer).git
 cd tree-traversal-explorer
 Install dependencies
 npm install
@@ -109,6 +109,6 @@ Inspired by the need for better algorithm visualization tools
 Thanks to the React and open-source community
 Special thanks to educators who make computer science accessible
 📧 Contact
-Your Name - @yourtwitter - your.email@example.com
+Your Name - sudhanva486@gmail.com
 
-Project Link: https://github.com/yourusername/tree-traversal-explorer
+Project Link: https://github.com/Sudhu04/File-Explorer
